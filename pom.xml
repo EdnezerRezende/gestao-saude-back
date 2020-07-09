@@ -71,6 +71,15 @@
 		<version>1.18.12</version>
 		<scope>provided</scope>
 	</dependency>
+	<dependency>
+		<groupId>io.quarkus</groupId>
+		<artifactId>quarkus-jdbc-postgresql</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>io.quarkus</groupId>
+		<artifactId>quarkus-hibernate-validator</artifactId>
+		<version>1.4.1.Final</version>
+	</dependency>
   </dependencies>
   <build>
     <plugins>
