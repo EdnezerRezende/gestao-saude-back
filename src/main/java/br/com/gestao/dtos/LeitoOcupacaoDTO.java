@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LeitoNewDTO {
+public class LeitoOcupacaoDTO {
 	
 	private Long id;
 	
@@ -15,5 +15,14 @@ public class LeitoNewDTO {
 	
 	private String setor; 
 	
+	private Long idPaciente;
+
+	private String nome;
+	
+	private String sexo;
+	
+	private Long numeroSES;
+	
+	private String textoAlta;
 	
 }

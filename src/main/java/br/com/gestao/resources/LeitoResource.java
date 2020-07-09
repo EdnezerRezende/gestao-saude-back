@@ -1,5 +1,6 @@
 package br.com.gestao.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,8 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import br.com.gestao.dtos.LeitoNewDTO;
+import br.com.gestao.dtos.LeitoOcupacaoDTO;
 import br.com.gestao.entidades.Leito;
 import br.com.gestao.repositories.LeitoRepository;
+import br.com.gestao.repositories.PacienteRepository;
 import io.quarkus.panache.common.Parameters;
 
 @Path("api/leitos")
@@ -27,11 +30,51 @@ public class LeitoResource {
 	@Inject
 	LeitoRepository leitoDAO;
 	
+	@Inject
+	PacienteRepository pacienteRepository;
+	
 	@GET
 	public List<Leito> buscarTodosLeitos(){
 		return leitoDAO.list("isDeletado = :isDeletado", Parameters.with("isDeletado", Boolean.FALSE));
 	}
 	
+	@GET
+	@Path("/leitos-quantitativo")
+	public List<Leito> buscarLeitoQuantitativo(){
+		List<Leito> leitos = leitoDAO.list("isDeletado = :isDeletado order by numeroLeito", Parameters.with("isDeletado", Boolean.FALSE));
+		return leitos;
+	}
+	
+	@GET
+	@Path("/leitos-ocupacao")
+	public List<LeitoOcupacaoDTO> buscarLeitosPorOcupacao(){
+		
+		List<LeitoOcupacaoDTO> leitosOcupacao = new ArrayList<>();
+		List<Leito> leitos = leitoDAO.list("isDeletado = :isDeletado order by numeroLeito", Parameters.with("isDeletado", Boolean.FALSE));
+		leitos.stream().forEach(leito -> {
+			LeitoOcupacaoDTO leitoOcupacao = new LeitoOcupacaoDTO();
+			leitoOcupacao.setId(leito.id);
+			leitoOcupacao.setAla(leito.getAla());
+			leitoOcupacao.setNumeroLeito(leito.getNumeroLeito());
+			leitoOcupacao.setSetor(leito.getSetor());
+
+			if(leito.getEmUso()) {
+				leitoOcupacao.setId(leito.getPaciente().id);
+				leitoOcupacao.setNome(leito.getPaciente().getNome());
+				leitoOcupacao.setNumeroSES(leito.getPaciente().getNumeroSES());
+				leitoOcupacao.setSexo(leito.getPaciente().getSexo());
+				leitoOcupacao.setTextoAlta(leito.getPaciente().getTextoAlta());
+			}
+			leitosOcupacao.add(leitoOcupacao);
+		});
+		return leitosOcupacao;
+	}
+	
+	@GET
+	@Path("/{leitoId}")
+	public Leito buscarTodosLeitoPorId(@PathParam(value= "leitoId") Long leitoId ){
+		return leitoDAO.findById(leitoId);
+	}
 	
 	@GET
 	@Path("/disponiveis")
@@ -50,16 +93,20 @@ public class LeitoResource {
 	@Transactional
 	public void salvarLeito(LeitoNewDTO leitoDto){
 		
-		Boolean existeByNumeroLeito = leitoDAO.existeByNumero(leitoDto.getNumeroLeito());
+		Boolean existeByNumeroLeito = leitoDAO.existeByNumero(leitoDto.getNumeroLeito(), leitoDto.getAla(), leitoDto.getSetor());
 		if(existeByNumeroLeito) {
 			throw new RuntimeException("Leito já cadastrado");
 		}
+		
 		Leito leito = new Leito();
+		if(leitoDto.getId() != null) {
+			leito = leitoDAO.findById(leitoDto.getId());
+		}
 		leito.setNumeroLeito(leitoDto.getNumeroLeito());
 		leito.setAla(leitoDto.getAla());
 		leito.setSetor(leitoDto.getSetor());
-		leito.setIsDeletado(Boolean.FALSE);
-		leito.setEmUso(Boolean.FALSE);
+		leito.setIsDeletado(leito.getIsDeletado() == null ? Boolean.FALSE : leito.getIsDeletado());
+		leito.setEmUso(leito.getEmUso() == null ? Boolean.FALSE : leito.getEmUso());
 		leitoDAO.persist(leito);
 	}
 	

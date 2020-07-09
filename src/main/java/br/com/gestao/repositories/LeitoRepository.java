@@ -9,7 +9,11 @@ import io.quarkus.panache.common.Parameters;
 @ApplicationScoped
 public class LeitoRepository implements PanacheRepository<Leito> {
 
-	public Boolean existeByNumero(Integer numeroLeito) {
-		return find("numeroLeito = :numeroLeito and isDeletado = :isDeletado", Parameters.with("numeroLeito", numeroLeito).and("isDeletado", Boolean.FALSE)).firstResult() != null;
+	public Boolean existeByNumero(Integer numeroLeito, String ala, String setor) {
+		return find("numeroLeito = :numeroLeito and ala = :ala and setor = :setor and isDeletado = :isDeletado", 
+				Parameters.with("numeroLeito", numeroLeito)
+				.and("isDeletado", Boolean.FALSE)
+				.and("ala", ala)
+				.and("setor", setor)).firstResult() != null;
 	};
 }

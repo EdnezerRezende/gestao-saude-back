@@ -17,11 +17,13 @@ import br.com.gestao.dtos.dashBoardPacientesDTO;
 import br.com.gestao.entidades.Comorbidade;
 import br.com.gestao.entidades.Doenca;
 import br.com.gestao.entidades.Leito;
+import br.com.gestao.entidades.LocalOrigem;
 import br.com.gestao.entidades.Origem;
 import br.com.gestao.entidades.Paciente;
 import br.com.gestao.repositories.ComorbidadeRepository;
 import br.com.gestao.repositories.DoencaRepository;
 import br.com.gestao.repositories.LeitoRepository;
+import br.com.gestao.repositories.LocalOrigemRepository;
 import br.com.gestao.repositories.PacienteRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,8 +43,15 @@ public class PacienteService {
 	@Inject
 	ComorbidadeRepository comorbidadeRepository;
 	
+	@Inject
+	LocalOrigemRepository localOrigemRepository;
+	
 	public List<Paciente> todosPacientesSemAlta(){
 		return pacienteRepository.list("dataAlta is null");
+	}
+	
+	public List<Paciente> todosPacientesLiberados(){
+		return pacienteRepository.list("dataAlta is not null");
 	}
 	
 	public dashBoardPacientesDTO todosQuantidadePacientesPorSexo(){
@@ -75,29 +84,36 @@ public class PacienteService {
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 		origem.setDataAdmissaoOrigem(LocalDateTime.parse(pacienteDTO.getOrigem().getDataAdmissaoOrigem(), formatter));
-//		origem.setLocalOrigem(pacienteDTO.getOrigem().getLocalOrigem());
+		LocalOrigem localOrigem = localOrigemRepository.findById(pacienteDTO.getOrigem().getLocalOrigem().getId());
+		origem.setLocalOrigem(localOrigem);
 		origem.persist();
 				
-		Paciente paciente = new Paciente();
+		Paciente paciente;
+		if (pacienteDTO.getId() != null) {
+			paciente = pacienteRepository.findById(pacienteDTO.getId());
+		} else {
+			paciente = new Paciente();
+			Set<Comorbidade> comorbi = new HashSet<>();
+			paciente.setComorbidades(comorbi);
+		}
 		paciente.setNome(pacienteDTO.getNome());
 		DateTimeFormatter formatterDataNas = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		paciente.setDataNascimento(LocalDate.parse(pacienteDTO.getDataNascimento(), formatterDataNas));
-		paciente.setOrigem(origem);
-		Set<Comorbidade> comorbi = new HashSet<>();
-		paciente.setComorbidades(comorbi);
+		
 		pacienteDTO.getComorbidades().forEach(comorbide -> {
 			Doenca doenca = doencaRepository.findById(comorbide.getId());
 
 			Comorbidade comorbidade = new Comorbidade();
 			comorbidade.setDoenca(doenca);
-			comorbidadeRepository.persist(comorbidade);
 			comorbidade.setPaciente(paciente);
+			comorbidadeRepository.persist(comorbidade);
 			paciente.getComorbidades().add(comorbidade);
 		});
 		
 		paciente.setSexo(pacienteDTO.getSexo());
 		paciente.setDataAdmissaoHCMG(LocalDateTime.now());
 		paciente.setNumeroSES(pacienteDTO.getNumeroSES());
+		paciente.setOrigem(origem);
 		pacienteRepository.persist(paciente);
 		comorbidadeRepository.persist(paciente.getComorbidades());
 	}
@@ -137,6 +153,10 @@ public class PacienteService {
 		
 		pacienteRepository.persist(paciente);
 		
+	}
+	
+	public void deletarPaciente(Long idPaciente) {
+		pacienteRepository.deleteById(idPaciente);
 	}
 
 }

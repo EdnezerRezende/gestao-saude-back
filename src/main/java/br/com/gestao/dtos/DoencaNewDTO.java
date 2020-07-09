@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DoencaNewDTO {
-	
+	private Long id;
 	private String nomeDoenca;
 	
 }

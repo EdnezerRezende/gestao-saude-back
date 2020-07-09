@@ -31,6 +31,13 @@ public class DoencaResource {
 		return doencaDAO.list("isDeletado", Boolean.FALSE);
 	}
 	
+	@GET
+	@Path("/{doencaId}")
+	public Doenca buscarDoencaPorId(@PathParam(value= "doencaId") Long doencaId ){
+		return doencaDAO.findById(doencaId);
+	}
+	
+	
 	@POST
 	@Transactional
 	public void salvarDoenca(DoencaNewDTO doencaDto){
@@ -38,6 +45,9 @@ public class DoencaResource {
 		Boolean existeByNome = doencaDAO.existeByNome(doencaDto.getNomeDoenca());
 		if(existeByNome) {
 			throw new RuntimeException("Doença já cadastrada");
+		}
+		if(doencaDto.getId() != null) {
+			doenca = doencaDAO.findById(doencaDto.getId());
 		}
 		doenca.setNomeDoenca(doencaDto.getNomeDoenca());
 		doenca.setIsDeletado(Boolean.FALSE);

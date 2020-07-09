@@ -34,6 +34,12 @@ public class LocalOrigemResource {
 		return localOrigemDAO.list("isDeletado", Boolean.FALSE);
 	}
 	
+	@GET
+	@Path("/{localOrigemId}")
+	public LocalOrigem buscarPorId(@PathParam(value="localOrigemId") Long localOrigemId){
+		return localOrigemDAO.findById(localOrigemId);
+	}
+	
 	@POST
 	@Transactional
 	public void salvarLocalOrigem(LocalOrigemNewDTO localDto){

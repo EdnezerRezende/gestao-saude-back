@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper=false, exclude= {"localOrigem", "dataAdmissaoOrigem", "paciente"})
+@EqualsAndHashCode(callSuper=false, exclude= {"localOrigem", "dataAdmissaoOrigem"})
 public class Origem extends PanacheEntity {
 
 	@OneToOne(cascade=CascadeType.DETACH)
@@ -31,7 +31,7 @@ public class Origem extends PanacheEntity {
 	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
 	private LocalDateTime dataAdmissaoOrigem;
 	
-	@OneToOne
-	private Paciente paciente;
+//	@OneToOne
+//	private Paciente paciente;
 
 }

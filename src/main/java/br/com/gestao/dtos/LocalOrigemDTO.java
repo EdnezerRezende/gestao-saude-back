@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class LocalOrigemDTO {
 	
-	private Long idLocalOrigem;
+	private Long id;
 	
 }
