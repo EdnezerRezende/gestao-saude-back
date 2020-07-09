@@ -6,6 +6,8 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -40,4 +42,9 @@ public class Leito extends PanacheEntity {
 	@ManyToOne
 	@JsonbTransient
 	private Paciente paciente;
+	
+//	@JsonGetter
+//	public Paciente getPacienteDTO() {
+//		return paciente;
+//	}
 }

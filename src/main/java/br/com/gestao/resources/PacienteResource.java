@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import br.com.gestao.dtos.AltaPacienteDTO;
 import br.com.gestao.dtos.PacienteNewDTO;
 import br.com.gestao.dtos.dashBoardPacientesDTO;
+import br.com.gestao.entidades.LocalOrigem;
 import br.com.gestao.entidades.Paciente;
 import br.com.gestao.services.PacienteService;
 
@@ -30,6 +32,12 @@ public class PacienteResource {
 	@GET
 	public List<Paciente> buscarTodosPacientesAtivos(){
 		return pacienteService.todosPacientesSemAlta();
+	}
+	
+	@GET
+	@Path("/liberados")
+	public List<Paciente> buscarTodosPacientesLiberados(){
+		return pacienteService.todosPacientesLiberados();
 	}
 	
 	@GET
@@ -77,5 +85,12 @@ public class PacienteResource {
 	@Path("associar-leito/{idPaciente}/{idLeito}")
 	public void associarLeito(@PathParam(value = "idPaciente") Long idPaciente, @PathParam(value = "idLeito") Long idLeito) {
 		pacienteService.associarLeito(idPaciente, idLeito);
+	}
+	
+	@DELETE
+	@Transactional
+	@Path("/{idPaciente}")
+	public void deletarPacientePorId(@PathParam(value = "idPaciente") Long idPaciente) {
+		pacienteService.deletarPaciente(idPaciente);
 	}
 }

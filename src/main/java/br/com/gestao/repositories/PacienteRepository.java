@@ -13,5 +13,4 @@ public class PacienteRepository implements PanacheRepository<Paciente> {
 		return find("nome = :nomePaciente ", Parameters.with("nomePaciente", nomePaciente)).firstResult() != null;
 	};
 	
-	
 }

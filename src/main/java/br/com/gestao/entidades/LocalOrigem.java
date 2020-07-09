@@ -1,7 +1,6 @@
 package br.com.gestao.entidades;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
@@ -17,15 +16,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper=false, exclude= {"nomeOrigem", "isDeletado", "origem"})
+@EqualsAndHashCode(callSuper=false, exclude= {"nomeOrigem", "isDeletado"})
 public class LocalOrigem extends PanacheEntity {
 	
 	private String nomeOrigem;
 	
 	private Boolean isDeletado;
 	
-	@OneToOne
-	private Origem origem;
+//	@OneToOne
+//	private Origem origem;
 	
 	
 }

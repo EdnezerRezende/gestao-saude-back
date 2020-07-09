@@ -61,4 +61,7 @@ public class Paciente extends PanacheEntity{
 	@Lob @Basic(fetch=FetchType.LAZY)
 	private String textoAlta;
 		
+	public void setId(Long id) {
+		this.id = id;
+	}
 }

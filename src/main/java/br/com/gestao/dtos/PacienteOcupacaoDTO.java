@@ -1,13 +1,11 @@
 package br.com.gestao.dtos;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class PacienteNewDTO {
+public class PacienteOcupacaoDTO {
 	
 	private Long id;
 
@@ -19,9 +17,6 @@ public class PacienteNewDTO {
 	
 	private Long numeroSES;
 	
-	private OrigemDTO origem;
-	
-	private List<ComorbidesDTO> comorbidades;
-
+	private String textoAlta;
 
 }
